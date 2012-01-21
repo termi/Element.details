@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<script src="http://static.onlf.ru/js/a.js"></script>
+<script src="../__SRC/Element.details.js"></script>
+
+<meta charset="utf-8">
+<title>Details</title>
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+a {color: #C00;}
+details {border: 1px solid #E1E1E1; border-radius: 5px; box-shadow: 0 1px 4px rgba(0, 0, 0, .4); color: #363636; margin: 0 0 .4em; padding: 1%;}
+details[open] {background: #E1E1E1;}
+summary {background: -webkit-linear-gradient(top, #FAFAFA 50%, #E1E1E1 50%);background: -o-linear-gradient(top, #FAFAFA 50%, #E1E1E1 50%); border-radius: 5px; cursor: pointer; font-size: .8em; font-weight: bold; margin: -1%; padding: 8px 0; position: relative; width: 102%;}
+summary:hover, details[open] summary {background: #E1E1E1;}
+summary>.details-marker, summary::-webkit-details-marker {display: none}
+summary:before{border-radius: 5px; content: "+"; color: #363636; display: block; float: left; font-size: 1.5em; font-weight: bold; margin: -2px 10px 0 10px; padding: 0; text-align: center; width: 20px;}
+details[open] summary:before {content: "-"; margin-top: -4px;}
+p {font-size: .8em;}
+</style>
+
+<details open>
+    <summary>Question 1</summary>
+    <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+</details>
+<details>
+    <summary>Question 2</summary>
+    <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+</details>
+<details>
+    <summary>Question 3</summary>
+    <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+</details>
+<details>
+    <summary>Question 4</summary>
+    <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+</details>
+
+<style>
+	details, summary { display: block; border: 1px solid #666; padding: 1em; }
+	/* Apply a pointer cursor and style the background upon hover to indicate <summary> is a clickable element. */
+	/* These styles can be applied regardless of whether the fallback is needed */
+	summary { cursor: pointer; }
+	summary:hover, summary:focus { background: #ddd; }
+
+	/* The following styles are not really needed, since the jQuery script takes care of hiding/displaying the elements. */
+	/* However, we’re still gonna use CSS as well to prevent FOUC in browsers that understand these selectors. */
+	/* Remember: by default (and probably most of the time), the contents of the <details> element are hidden. */
+	.no-details details > * { display: none; }
+	/* This doesn’t work very well in Firefox 3.6.x */
+	/* .no-details details[open] > * { display: block; } */
+	/* The following doesn’t toggle correctly in WebKit:
+	.no-details details summary:before { content: '> '; }
+	.no-details details[open] summary:before { content: '¡ '; }
+	*/
+	/* And yes, it should really be ::before, but that doesn’t work in IE8 */
+	.no-details details summary:before { float: left; width: 20px; content: '> '; }
+	.no-details details.open summary:before { content: '¡ '; }
+	/* For IE6 and IE7, who don’t support generated content, you could use padding-left + a background image instead */
+	/* I really couldn’t be bothered though. */
+	/*
+	.no-details details summary { padding-left: 20px; background: url(img/arrow-sprite.png) no-repeat 0 0; }
+	.no-details details.open summary { background-position: 0 -20px; }
+	*/
+	/* Make sure summary remains visible */
+	.no-details details summary { display: block; }
+</style>
+
+<!-- Example taken from http://www.w3.org/TR/html5/interactive-elements.html#the-details-element -->
+<section class="progress window">
+	<h1>Copying “Really Achieving Your Childhood Dreams” (<code>details</code> with <code>summary</code>)</h1>
+	<details>
+		<summary>Copying… <progress max="375505392" value="97543282"></progress> 25%</summary>
+		<dl>
+			<dt>Transfer rate:</dt>
+			 <dd>452KB/s</dd>
+			<dt>Local filename:</dt>
+			 <dd>/home/rpausch/raycd.m4v</dd>
+			<dt>Remote filename:</dt>
+			 <dd>/var/www/lectures/raycd.m4v</dd>
+			<dt>Duration:</dt>
+			 <dd>01:16:27</dd>
+			<dt>Color profile:</dt>
+			 <dd>SD (6-1-6)</dd>
+			<dt>Dimensions:</dt>
+			 <dd>320?240</dd>
+		</dl>
+	</details>
+</section>
+<!-- Same example, but now without a <summary> -->
+<section class="progress window">
+	<h1>Copying “Really Achieving Your Childhood Dreams” (<code>details</code> without <code>summary</code>)</h1>
+	<details>
+		<dl>
+			<dt>Transfer rate:</dt>
+			 <dd>452KB/s</dd>
+			<dt>Local filename:</dt>
+			 <dd>/home/rpausch/raycd.m4v</dd>
+			<dt>Remote filename:</dt>
+			 <dd>/var/www/lectures/raycd.m4v</dd>
+			<dt>Duration:</dt>
+			 <dd>01:16:27</dd>
+			<dt>Color profile:</dt>
+			 <dd>SD (6-1-6)</dd>
+			<dt>Dimensions:</dt>
+			 <dd>320?240</dd>
+		</dl>
+	</details>
+</section>
+<!-- Same example, but now without the `open` attribute -->
+<section class="progress window">
+	<h1>Copying “Really Achieving Your Childhood Dreams” (<code>details</code> with <code>open</code> attribute)</h1>
+	<details open>
+		<summary>Copying… <progress max="375505392" value="97543282"></progress> 25%</summary>
+		<dl>
+			<dt>Transfer rate:</dt>
+			 <dd>452KB/s</dd>
+			<dt>Local filename:</dt>
+			 <dd>/home/rpausch/raycd.m4v</dd>
+			<dt>Remote filename:</dt>
+			 <dd>/var/www/lectures/raycd.m4v</dd>
+			<dt>Duration:</dt>
+			 <dd>01:16:27</dd>
+			<dt>Color profile:</dt>
+			 <dd>SD (6-1-6)</dd>
+			<dt>Dimensions:</dt>
+			 <dd>320?240</dd>
+		</dl>
+	</details>
+</section>
+<!-- <details> element containing only text, as requested by Shelley Powers -->
+<section>
+	<h1><code>details</code> element containing only text</h1>
+	<details>
+		Test
+	</details>
+</section>
+<!-- <details> element containing some direct child text nodes in addition to other children -->
+<section>
+	<h1><code>details</code> element containing some children and some child text nodes</h1>
+	<details>
+		<!-- An HTML comment -->
+		<p>Foo</p>
+		<!-- Another HTML comment -->
+		Bar
+		<p>Baz<!-- Another HTML comment --></p>
+		Inga
+	</details>
+</section>
