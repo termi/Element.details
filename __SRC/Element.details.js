@@ -1,46 +1,37 @@
-;(function(global, $$, $A, support, isIElt8Support) {
+﻿;(function(global, $$, $A, support, isIElt8Support) {
 	var /**
 		 * @const
 		 * @type {string}
 		 */
-		__OPEN_WORD__ = "open",
-		/**
-		 * @const
-		 * @type {string}
-		 */
-		__CLOSE_WORD__ = "close";
-	
-	var root;//TODO
+		__OPEN_WORD__ = "open";
 	
 	if(!support) {
-		
-		// ------------------------- open Property START ----------------------------------
+		// open property
 		// IE < 8 support in [IElt8] section and Element.details.ielt8.htc
-		var nodeProto = global["HTMLElement"] && global["HTMLElement"].prototype || 
-		   /*ie8*/global["Element"] && global["Element"].prototype || 
-		   /*ielt8*/(global["_ielt8_Detail_Element_4d1am"] = {});
-		
-		
-		Object.defineProperty(nodeProto, __OPEN_WORD__, {
-			"get" : function() {
-				if(this.nodeName != "DETAILS")return undefined;
-				
-				return this.getAttribute(__OPEN_WORD__) != null;//hasAttribute
-			},
-			"set" : function(booleanValue) {
-				if(this.nodeName != "DETAILS")return undefined;
-				
-				booleanValue ?
-					(this.setAttribute(__OPEN_WORD__, __OPEN_WORD__), this.classList.remove(__CLOSE_WORD__), this.classList.add(__OPEN_WORD__)) :
-					(this.removeAttribute(__OPEN_WORD__), this.classList.remove(__OPEN_WORD__), this.classList.add(__CLOSE_WORD__));
-				
-				//$A(this.childNodes).forEach(emulateDetailChildrenOpenClose);
-				
-				return booleanValue;
-			},
-			"ielt8" : isIElt8Support//[IElt8]
-		});
-		// ------------------------- open Property END ----------------------------------
+		Object.defineProperty(
+			global["HTMLElement"] && global["HTMLElement"].prototype || 
+				/*ie8*/global["Element"] && global["Element"].prototype || 
+				/*ielt8*/(global["_ielt8_Detail_Element_4d1am"] = {}),
+			__OPEN_WORD__, {
+				"get" : function() {
+					if(this.nodeName != "DETAILS")return undefined;
+					
+					return this.getAttribute(__OPEN_WORD__) != null;//hasAttribute
+				},
+				"set" : function(booleanValue) {
+					if(this.nodeName != "DETAILS")return undefined;
+					
+					booleanValue ?
+						(this.setAttribute(__OPEN_WORD__, __OPEN_WORD__), this.classList.remove("close"), this.classList.add(__OPEN_WORD__)) :
+						(this.removeAttribute(__OPEN_WORD__), this.classList.remove(__OPEN_WORD__), this.classList.add("close"));
+					
+					//$A(this.childNodes).forEach(emulateDetailChildrenOpenClose);
+					
+					return booleanValue;
+				},
+				"ielt8" : isIElt8Support//[IElt8]
+			}
+		);
 		
 		/*TODO START: use normal createStyle function*/
 		var style = document.createElement("style"),
@@ -69,9 +60,10 @@
 			this.parentNode[__OPEN_WORD__] = !this.parentNode[__OPEN_WORD__];
 		}
 		
-		function init() {
+		function init(root) {
 			$A($$("details"), root).forEach(function(detail) {
-				detail[__OPEN_WORD__] = detail.hasAttribute(__OPEN_WORD__);
+				detail[__OPEN_WORD__] = 
+					detail.getAttribute(__OPEN_WORD__) != null;//hasAttribute
 				
 				$A(detail.childNodes).forEach(function(child) {
 					if(child.nodeType === 3 && /[^\t\n\r ]/.test(child.data)) {
@@ -87,7 +79,7 @@
 				var summary = $$(">summary", detail)[0];
 				if(!summary)
 					(summary = 
-						detail.insertBefore(document.createElement("x-summary"), detail.children[0])//Create a fake "summary" element
+						detail.insertBefore(document.createElement("x-s"), detail.children[0])//Create a fake "summary" element
 						).innerText = "Details",
 					summary.style.display = "block";
 				
@@ -102,7 +94,7 @@
 		}
 		
 		if(document.readyState != "complete")
-			global.addEventListener("DOMContentLoaded", init, false);
+			global.addEventListener("DOMContentLoaded", init.bind(null, null), false);
 		else init();
 	}
 	else {
