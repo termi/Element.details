@@ -6,6 +6,13 @@ var details = document.querySelector("details");
 details.open = true;
 details.open = false;
 
+CSS selector for 'details marker':
+summary .details-marker,/* <-- */
+summary::-webkit-details-marker
+[,summary::-moz-details-marker]
+[,summary::-o-details-marker]
+,summary::details-marker { <some> }
+
 Features:
 - Extend HTMLElement.prototype with "open" property
 - No libs need (almost)

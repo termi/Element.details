@@ -6,7 +6,7 @@
 		__OPEN_WORD__ = "open";
 	
 	if(!support) {
-		// open property
+		// property 'open'
 		// IE < 8 support in [IElt8] section and Element.details.ielt8.htc
 		Object.defineProperty(
 			global["HTMLElement"] && global["HTMLElement"].prototype || 
@@ -33,31 +33,38 @@
 			}
 		);
 		
-		/*TODO START: use normal createStyle function*/
-		var style = document.createElement("style"),
-			rules = [];
-		
-		rules[0] = document.createTextNode('details{display:block}');
-		rules[1] = document.createTextNode('details.close>*{display:none}');
-		rules[2] = document.createTextNode('details>summary,details.close>summary{display:block}');
-		rules[3] = document.createTextNode('details>summary::before{content:"►"}');//TODO:: replase summary::before to summary>.details-marker
-		rules[4] = document.createTextNode('details.open>summary::before{content:"▼"}');//TODO:: replase summary::before to summary>.details-marker
-		style.type = 'text/css';
-		if(style.styleSheet)
-			style.styleSheet.cssText = rules[0].nodeValue + ";" + rules[1].nodeValue + ";" + rules[2].nodeValue + ";" + rules[3].nodeValue + ";" + rules[4].nodeValue;
-		else {
-			style.appendChild(rules[0]);
-			style.appendChild(rules[1]);
-			style.appendChild(rules[2]);
-			style.appendChild(rules[3]);
-			style.appendChild(rules[4]);
-		}
-		document.head.appendChild(style);
-		/*TODO END*/
-		
+		//style
+		(function createStyleSheet(rules) {
+			var style = document.createElement('style');
+			// Safari does not see the new stylesheet unless you append something.
+			// However!  IE will blow chunks, so ... filter it thusly:
+			if(!global["createPopup"])style.appendChild(document.createTextNode(''));
+			
+			document.head.appendChild(style);
+			var s = document.styleSheets[document.styleSheets.length - 1];
+
+			// loop through and insert
+			for(selector in rules) {
+				if(s.insertRule)// it's an IE browser
+					s.insertRule(selector + rules[selector], s.cssRules.length); 
+				else // it's a W3C browser
+					s.addRule(selector, rules[selector]);
+			}
+			
+		})({
+			"details" : "{display:block}",
+			"details.close>*" : "{display:none}",
+			"details>summary,details.close>summary,details>x-s" : "{display:block}",
+			"details>summary::before" : "{content:'►'}",//TODO:: replase summary::before to summary>.details-marker
+			"details.open>summary::before" : "{content:'▼'}"//TODO:: replase summary::before to summary>.details-marker
+			})	
 	
-		function event_DetailClick() {
-			this.parentNode[__OPEN_WORD__] = !this.parentNode[__OPEN_WORD__];
+		//events
+		function event_DetailClick(e) {
+			// 32 - space. Need this ???
+			// 13 - Enter. Opera triggers .click()
+			if(!e.keyCode/*e.type == "click"*/ || e.keyCode == 13/*e.type == "keyup"*/)
+				this.parentNode[__OPEN_WORD__] = !this.parentNode[__OPEN_WORD__];
 		}
 		
 		function init(root) {
@@ -67,25 +74,23 @@
 				
 				$A(detail.childNodes).forEach(function(child) {
 					if(child.nodeType === 3 && /[^\t\n\r ]/.test(child.data)) {
-						var a = detail.insertBefore(
+						detail.insertBefore(
 							document.createElement("x-i")//Create a fake inline element
-							, child);
-						a.innerHTML = child.data;
-						a.style.display = "inline";
+							, child).innerHTML = child.data;
+						//a.style.display = "inline";
 						detail.removeChild(child);
 					}
 				})
 				
 				var summary = $$(">summary", detail)[0];
-				if(!summary)
-					(summary = 
-						detail.insertBefore(document.createElement("x-s"), detail.children[0])//Create a fake "summary" element
-						).innerText = "Details",
-					summary.style.display = "block";
+				if(!summary)(summary = document.createElement("x-s")).innerText = "Details";//Create a fake "summary" element
+				detail.insertBefore(summary, detail.children[0]);//Put summary as a first child
 				
 				summary.setAttribute("tabindex", 0);//For access from keyboard
 				
 				summary.addEventListener("click", event_DetailClick, false);
+				if(!global.opera)// keyCode 13 - Enter. Opera triggers .click()
+					summary.addEventListener("keyup", event_DetailClick, false);
 				
 				//[IElt8] START
 				if(global["_ielt8_Detail_Element_4d1am"] && isIElt8Support)detail["addBehavior"]("Element.details.ielt8.htc");
@@ -118,6 +123,6 @@
 	
 	'open' in document.createElement('details'),// Chrome 10 will fail this detection, but Chrome 10 is no longer existing
 	
-	true//Try to support IE < 8
+	true//[IElt8] Try to support IE < 8
 );
 
