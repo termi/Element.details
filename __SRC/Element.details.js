@@ -59,11 +59,15 @@
 			"details.open>summary::before" : "{content:'▼'}"//TODO:: replase summary::before to summary>.details-marker
 			})	
 	
-		//events
+		//events TODO:: more elegant with opera fix :)
 		function event_DetailClick(e) {
 			// 32 - space. Need this ???
 			// 13 - Enter. Opera triggers .click()
-			if(!e.keyCode/*e.type == "click"*/ || e.keyCode == 13/*e.type == "keyup"*/)
+			
+			// TODO:: this need more complex tests in different browsers.
+			if(e.detail === 1 || //e.type == "click" and one click. In IE6-8 it need event fixed for  event.detail
+			   e.keyCode == 13 //e.type == "keyup"
+			   )
 				this.parentNode[__OPEN_WORD__] = !this.parentNode[__OPEN_WORD__];
 		}
 		
@@ -82,15 +86,15 @@
 					}
 				})
 				
-				var summary = $$(">summary", detail)[0];
+				var summary, _s, i = 0;
+				while(!summary)_s = detail.childNodes[i++], _s.tagName == "SUMMARY" ? summary = _s : 0;//Instead of $$(">summary")[0]
 				if(!summary)(summary = document.createElement("x-s")).innerHTML = "Details";//Create a fake "summary" element
 				detail.insertBefore(summary, detail.children[0]);//Put summary as a first child
 				
 				summary.setAttribute("tabindex", 0);//For access from keyboard
 				
 				summary.addEventListener("click", event_DetailClick, false);
-				if(!global.opera)// keyCode 13 - Enter. Opera triggers .click()
-					summary.addEventListener("keyup", event_DetailClick, false);
+				summary.addEventListener("keyup", event_DetailClick, false);
 				
 				//[IElt8] START
 				if(global["_ielt8_Detail_Element_4d1am"] && isIElt8Support)detail["addBehavior"]("Element.details.ielt8.htc");
