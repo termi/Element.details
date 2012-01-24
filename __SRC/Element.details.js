@@ -83,7 +83,7 @@
 				})
 				
 				var summary = $$(">summary", detail)[0];
-				if(!summary)(summary = document.createElement("x-s")).innerText = "Details";//Create a fake "summary" element
+				if(!summary)(summary = document.createElement("x-s")).innerHTML = "Details";//Create a fake "summary" element
 				detail.insertBefore(summary, detail.children[0]);//Put summary as a first child
 				
 				summary.setAttribute("tabindex", 0);//For access from keyboard
