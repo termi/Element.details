@@ -1,35 +1,34 @@
-﻿;(function(global, $$, $A, support, isIElt8Support) {
-	var /**
-		 * @const
-		 * @type {string}
-		 */
-		__OPEN_WORD__ = "open";
-	
+﻿// ==ClosureCompiler==
+// @compilation_level ADVANCED_OPTIMIZATIONS
+// @warning_level VERBOSE
+// @jscomp_warning missingProperties
+// @output_file_name Element.detail.js
+// @check_types
+// ==/ClosureCompiler==
+
+;(function(global, support, isIElt8Support) {
 	if(!support) {
 		// property 'open'
-		// IE < 8 support in [IElt8] section and Element.details.ielt8.htc
+		// IE < 9 support in https://github.com/termi1uc1/ES5-DOM-SHIM
 		Object.defineProperty(
-			global["HTMLElement"] && global["HTMLElement"].prototype || 
-				/*ie8*/global["Element"] && global["Element"].prototype || 
-				/*ielt8*/(global["_ielt8_Detail_Element_4d1am"] = {}),
-			__OPEN_WORD__, {
+			global["Node"] && global["Node"].prototype,
+			"open", {
 				"get" : function() {
 					if(this.nodeName != "DETAILS")return undefined;
 					
-					return this.getAttribute(__OPEN_WORD__) != null;//hasAttribute
+					return this.getAttribute("open") != null;//hasAttribute
 				},
 				"set" : function(booleanValue) {
 					if(this.nodeName != "DETAILS")return undefined;
 					
 					booleanValue ?
-						(this.setAttribute(__OPEN_WORD__, __OPEN_WORD__), this.classList.remove("close"), this.classList.add(__OPEN_WORD__)) :
-						(this.removeAttribute(__OPEN_WORD__), this.classList.remove(__OPEN_WORD__), this.classList.add("close"));
+						(this.setAttribute("open", "open"), this.classList.remove("close"), this.classList.add("open")) :
+						(this.removeAttribute("open"), this.classList.remove("open"), this.classList.add("close"));
 					
 					//$A(this.childNodes).forEach(emulateDetailChildrenOpenClose);
 					
 					return booleanValue;
-				},
-				"ielt8" : isIElt8Support//[IElt8]
+				}
 			}
 		);
 		
@@ -59,29 +58,28 @@
 			"details.open>summary::before" : "{content:'▼'}"//TODO:: replase summary::before to summary>.details-marker
 			})	
 	
-		//events TODO:: more elegant with opera fix :)
 		function event_DetailClick(e) {
+			if(e.type === "click" && e.detail === 0)return;//Opera generate "click" event
+			
 			// 32 - space. Need this ???
 			// 13 - Enter. Opera triggers .click()
 			
-			// TODO:: this need more complex tests in different browsers.
-			if(e.detail === 1 || //e.type == "click" and one click. In IE6-8 it need event fixed for  event.detail
-			   e.keyCode == 13 //e.type == "keyup"
+			if(e.keyCode === 13 //e.type == "keyup"
 			   )
-				this.parentNode[__OPEN_WORD__] = !this.parentNode[__OPEN_WORD__];
+				this.parentNode["open"] = !this.parentNode["open"];
 		}
 		
 		function init(root) {
-			$A($$("details"), root).forEach(function(detail) {
-				detail[__OPEN_WORD__] = 
-					detail.getAttribute(__OPEN_WORD__) != null;//hasAttribute
+			Array.from((root || document).getElementsByTagName("details")).forEach(function(detail) {
+				detail["open"] = 
+					detail.hasAttribute("open");
 				
-				$A(detail.childNodes).forEach(function(child) {
+				Array.from(detail.childNodes).forEach(function(child) {
 					if(child.nodeType === 3 && /[^\t\n\r ]/.test(child.data)) {
 						detail.insertBefore(
 							document.createElement("x-i")//Create a fake inline element
 							, child).innerHTML = child.data;
-						//a.style.display = "inline";
+
 						detail.removeChild(child);
 					}
 				})
@@ -96,9 +94,10 @@
 				summary.addEventListener("click", event_DetailClick, false);
 				summary.addEventListener("keyup", event_DetailClick, false);
 				
-				//[IElt8] START
-				if(global["_ielt8_Detail_Element_4d1am"] && isIElt8Support)detail["addBehavior"]("Element.details.ielt8.htc");
-				//[IElt8] END
+				//[IElt8]
+				//IE < 8 support
+				//Algoritm in https://github.com/termi1uc1/ES5-DOM-SHIM/wiki/IE-less-then-8-shim-algoritm
+				if(isIElt8Support && global["Node"].prototype["ielt8"])detail["addBehavior"]("Element.details.ielt8.htc");
 			})
 		}
 		
@@ -111,19 +110,6 @@
 	}
 })(
 	window,//global
-	/**
-	 * Youre own function(){return toArray(root.querySelectorAll(#selector#))} function
-	 * @param {string} selector
-	 * @param {Node|Document|DocumentFragment} root
-	 * @return {Array.<Node>}
-	 */
-	function(selector, root) {root = root || document;return window["$$"] ? window["$$"](selector, root) : Array.prototype.slice.apply(root.querySelectorAll(selector))},
-	/**
-	 * Youre own toArray function
-	 * @param {Object} iterable value
-	 * @return {Array}
-	 */
-	function(iterable) {return window["$A"] ? window["$A"](iterable) : Array.prototype.slice.apply(iterable)},
 	
 	'open' in document.createElement('details'),// Chrome 10 will fail this detection, but Chrome 10 is no longer existing
 	

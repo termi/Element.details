@@ -1,0 +1,8 @@
+<PUBLIC:COMPONENT lightWeight="true">
+<PUBLIC:PROPERTY NAME="open" GET="q" PUT="w" />
+<SCRIPT>
+var m=window.Node.prototype,
+q=m.getopen,
+w=m.setopen;
+</SCRIPT>
+</PUBLIC:COMPONENT>
