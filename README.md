@@ -36,6 +36,7 @@ __Status__: Beta
  - IE6+ only with this [DOM/JS shim](https://github.com/termi1uc1/ES5-DOM-SHIM) and with `Element.details.ielt8.htc` file in the root of youre site
 
 ## TODO
+0. new createStyleSheet function
 1. Listeners (open/close)
 2. Custom <x-i> element with "details-marker" class instead of "details>summary::before" for details marker purpose
 3. Code refactoring/minimising
