@@ -100,7 +100,7 @@
 					detail.removeChild(child);
 				}
 			}
-			Array.from(detail.childNodes).forEach(wrapTextNode);
+			Array["from"](detail.childNodes).forEach(wrapTextNode);
 			
 			//Instead of $$(">summary")[0]
 			while(!summary)
@@ -131,7 +131,7 @@
 		
 		//init
 		function init(root) {
-			Array.from(document.getElementsByTagName("details")).forEach(detailShim)
+			Array["from"](document.getElementsByTagName("details")).forEach(detailShim)
 		}
 		
 		//auto init
