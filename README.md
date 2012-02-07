@@ -1,4 +1,4 @@
-# A pure JS polyfill for `details` tag with DOM API for all browsers including IE6+
+﻿# A pure JS polyfill for `details` tag with DOM API for all browsers including IE6+
 
 __Status__: Beta
 (IMPORTANT)IE6 and IE7 support is not finished yet
@@ -11,11 +11,14 @@ __Status__: Beta
 
 ## CSS selector for 'details marker'
    
-    summary .details-marker,/* <-- */
-    summary::-webkit-details-marker
-    [,summary::-moz-details-marker]
-    [,summary::-o-details-marker]
-    ,summary::details-marker { <some> }
+    detail .details-marker { <some> }
+	[or] detail>*>.details-marker { <some> }
+	[or] detail>x-s>.details-marker { <some> }
+	
+    summary::-webkit-details-marker { <some> }
+    summary::-moz-details-marker { <some> }
+    summary::-o-details-marker { <some> }
+    summary::details-marker { <some> }
 
 ##Features
 
@@ -33,12 +36,9 @@ __Status__: Beta
  
 ## Browser support
  - With any DOM and JS shim: all browsers (including IE8+)
- - IE6+ only with this [DOM/JS shim](https://github.com/termi1uc1/ES5-DOM-SHIM) and with `Element.details.ielt8.htc` file in the root of youre site
+ - IE6+ only with this [DOM/JS shim](https://github.com/termi/ES5-DOM-SHIM) and with `Element.details.ielt8.htc` file in the root of youre site
 
 ## TODO
-0. new createStyleSheet function
 1. Listeners (open/close)
-2. Custom <x-i> element with "details-marker" class instead of "details>summary::before" for details marker purpose
-3. Code refactoring/minimising
-4. "root" in init() support
-5. External API for init() function
+2. "root" in init() support
+3. External API for init() function

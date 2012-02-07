@@ -2,7 +2,7 @@
 // @compilation_level ADVANCED_OPTIMIZATIONS
 // @warning_level VERBOSE
 // @jscomp_warning missingProperties
-// @output_file_name Element.detail.js
+// @output_file_name Element.details.js
 // @check_types
 // ==/ClosureCompiler==
 
@@ -33,65 +33,45 @@
 		);
 		
 		//style
-		(function createStyleSheet(rules) {
-			var style = document.createElement('style');
-			// Safari does not see the new stylesheet unless you append something.
-			// However!  IE will blow chunks, so ... filter it thusly:
-			if(!global["createPopup"])style.appendChild(document.createTextNode(''));
-			
-			document.head.appendChild(style);
-			var s = document.styleSheets[document.styleSheets.length - 1];
-
-			// loop through and insert
-			for(selector in rules) {
-				if(s.insertRule)// it's an IE browser
-					s.insertRule(selector + rules[selector], s.cssRules.length); 
-				else // it's a W3C browser
-					s.addRule(selector, rules[selector]);
-			}
-			
-		})({
-			"details" : "{display:block}",
-			"details.close>*" : "{display:none}",
-			"details>summary,details.close>summary,details>x-s" : "{display:block}",
-			"details>summary::before" : "{content:'►'}",//TODO:: replase summary::before to summary>.details-marker
-			"details.open>summary::before" : "{content:'▼'}"//TODO:: replase summary::before to summary>.details-marker
-			})	
+		var rules = 
+				"details{display:block}\n" +
+				"details.close>*{display:none}\n" +
+				"details>summary,details.close>summary,details>.▼{display:block}\n" +
+				"details .details-marker:before{content:'►'}\n" +
+				"details.open .details-marker:before{content:'▼'}",
+			style = document.createElement('style'),
+			key = style.innerText === undefined ? 'textContent' : 'innerText';
+		
+		style[key] = rules;
+		document.head.appendChild(style);
 	
 		//event		
 		function event_DetailClick(e) {
-			if(e.type === "click" && e.detail === 0)return;//Opera generate "click" event
+			if(e.type === "click" && e.detail === 0)return;//Opera generate "click" event with `detail` == 0 together with "keyup" event
 			
 			// 32 - space. Need this ???
-			// 13 - Enter. Opera triggers .click()
+			// 13 - Enter.
 			
-			if(e.keyCode === 13 //e.type == "keyup"
-			   )
+			if(e.keyCode === 13 ||//e.type == "keyup"
+			   e.type === "click")
 				this.parentNode["open"] = !this.parentNode["open"];
 		}
 		
 		//detail shim
 		function detailShim(detail) {
-			var /**
-				 * @type {Element}
-				 */
+			if(detail.isShimmed)return;
+			
+			var /** @type {Element} */
 				summary,
-				/**
-				 * Temporary container
-				 * @type {Element}
-				 */
-				_s,
-				/**
-				 * @type {number}
-				 */
+				/** @type {number} */
 				i = 0;
 			
 			//DOM API
 			detail["open"] = 
 				detail.hasAttribute("open");
 			
-			//Wrap text node's
-			function wrapTextNode(child) {
+			//Wrap text node's and found `summary`
+			function wrapTextNodeAndFoundSummary(child) {
 				if(child.nodeType === 3 && /[^\t\n\r ]/.test(child.data)) {
 					detail.insertBefore(
 						document.createElement("x-i")//Create a fake inline element
@@ -99,29 +79,32 @@
 
 					detail.removeChild(child);
 				}
+				else if(child.tagName == "SUMMARY")summary = child;
 			}
-			Array["from"](detail.childNodes).forEach(wrapTextNode);
-			
-			//Instead of $$(">summary")[0]
-			while(!summary)
-				_s = detail.childNodes[i++],
-				_s.tagName == "SUMMARY" ? summary = _s : 0;
+			Array["from"](detail.childNodes).forEach(wrapTextNodeAndFoundSummary);
 			
 			//Create a fake "summary" element
 			if(!summary)
 				(
 					summary = document.createElement("x-s")
-				).innerHTML = "Details";
+				).innerHTML = "Details",
+				summary.className = "▼";//http://css-tricks.com/unicode-class-names/
 				
 			//Put summary as a first child
-			detail.insertBefore(summary, detail.children[0]);
+			detail.insertBefore(summary, detail.childNodes[0]);
+			//Create `details-marker` and put it as a summary first child
+			summary.insertBefore(document.createElement('x-i'), summary.childNodes[0])
+				.className = "details-marker";
 			
 			//For access from keyboard
-			summary.setAttribute("tabindex", 0);
+			summary.tabIndex = 0;
 			
 			//events
 			summary.addEventListener("click", event_DetailClick, false);
 			summary.addEventListener("keyup", event_DetailClick, false);
+			
+			//flag to avoid double shim
+			detail.isShimmed = 1;
 			
 			//[IElt8]
 			//IE < 8 support
