@@ -1,4 +1,3 @@
-﻿
 # A pure JS polyfill for `details` tag with DOM API for all browsers including IE6+
 
 __Status__: Beta
