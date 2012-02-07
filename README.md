@@ -30,7 +30,9 @@ __Status__: Beta
 - IE6 and IE7 support with some tweaks
 
 ##Limitations
-1. Require: [Array.from](https://github.com/paulmillr/es6-shim)
+1. Require: 
+	- [Array.from](https://github.com/paulmillr/es6-shim)
+	- [EcmaScript5 shim](https://github.com/kriskowal/es5-shim) for browsers without ES5
 2. No animation support for now
 
  
