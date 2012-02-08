@@ -1,7 +1,7 @@
 # A pure JS polyfill for `details` tag with DOM API for all browsers including IE6+
 
-__Status__: Beta
-(IMPORTANT)IE6 and IE7 support is not finished yet
+__Status__: Beta (IMPORTANT)IE6 and IE7 support is not finished yet due IE < 8 broken `getAttribute`
+__Demo__: http://jsbin.com/eyopiy/2
 
 ## DOM API
     
@@ -22,9 +22,8 @@ __Status__: Beta
 
 ##Features
 
-- Extend HTMLElement.prototype with "open" property
+- DOM API (Extend Node.prototype with "open" property)
 - No libs need (almost)
-- DOM API
 - Create <x-s> element (instead of fake <summary> which can be styled in css) when <details> without <summary>
 - Wrap text nodes into custom element <x-i> instead of <span> (which can be styled in css)
 - IE6 and IE7 support with some tweaks

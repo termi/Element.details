@@ -9,28 +9,24 @@
 ;(function(global, support, isIElt8Support) {
 	if(!support) {
 		// property 'open'
-		// IE < 9 support in https://github.com/termi1uc1/ES5-DOM-SHIM
-		Object.defineProperty(
-			global["Node"].prototype,
-			"open", {
-				"get" : function() {
-					if(this.nodeName != "DETAILS")return undefined;
-					
-					return this.hasAttribute("open");
-				},
-				"set" : function(booleanValue) {
-					if(this.nodeName != "DETAILS")return undefined;
-					
-					booleanValue ?
-						(this.setAttribute("open", "open"), this.classList.remove("close"), this.classList.add("open")) :
-						(this.removeAttribute("open"), this.classList.remove("open"), this.classList.add("close"));
-					
-					//$A(this.childNodes).forEach(emulateDetailChildrenOpenClose);
-					
-					return booleanValue;
-				}
+		var open_property = {
+			"get" : function() {
+				if(this.nodeName.toUpperCase() != "DETAILS")return undefined;
+				
+				return this.hasAttribute("open");
+			},
+			"set" : function(booleanValue) {
+				if(this.nodeName.toUpperCase() != "DETAILS")return undefined;
+				
+				booleanValue ?
+					(this.setAttribute("open", "open"), this.classList.remove("close"), this.classList.add("open")) :
+					(this.removeAttribute("open"), this.classList.remove("open"), this.classList.add("close"));
+				
+				//$A(this.childNodes).forEach(emulateDetailChildrenOpenClose);
+				
+				return booleanValue;
 			}
-		);
+		}
 		
 		//style
 		var rules = 
@@ -40,9 +36,15 @@
 				"details .details-marker:before{content:'►'}\n" +
 				"details.open .details-marker:before{content:'▼'}",
 			style = document.createElement('style'),
-			key = style.innerText === undefined ? 'textContent' : 'innerText';
+			key = style.textContent !== undefined ? 'textContent' : 'innerText';
 		
-		style[key] = rules;
+		try {
+			style[key] = rules;
+		}
+		catch(e) {//IE < 9
+			style = document.createElement("x-i");
+			style.innerHTML = "<br><style>" + rules + "</style>";
+		}
 		document.head.appendChild(style);
 	
 		//event		
@@ -60,6 +62,10 @@
 		//detail shim
 		function detailShim(detail) {
 			if(detail.isShimmed)return;
+			
+			// property 'open'
+			// IE < 9 support in https://github.com/termi/ES5-DOM-SHIM
+			Object.defineProperty(detail, "open", open_property);
 			
 			var /** @type {Element} */
 				summary,
@@ -79,7 +85,7 @@
 
 					detail.removeChild(child);
 				}
-				else if(child.tagName == "SUMMARY")summary = child;
+				else if(child.nodeName.toUpperCase() == "SUMMARY")summary = child;
 			}
 			Array["from"](detail.childNodes).forEach(wrapTextNodeAndFoundSummary);
 			
@@ -108,13 +114,23 @@
 			
 			//[IElt8]
 			//IE < 8 support
-			//Algoritm in https://github.com/termi1uc1/ES5-DOM-SHIM/wiki/IE-less-then-8-shim-algoritm
-			if(isIElt8Support && global["Node"].prototype["ielt8"])detail["addBehavior"]("Element.details.ielt8.htc");
+			//Algoritm in https://github.com/termi/ES5-DOM-SHIM/wiki/IE-less-then-8-shim-algoritm
+			if(isIElt8Support && global["Node"].prototype["ielt8"]) {
+				detail["addBehavior"]("Element.details.ielt8.htc");
+			}
 		}
 		
 		//init
 		function init(root) {
-			Array["from"](document.getElementsByTagName("details")).forEach(detailShim)
+			//[IElt8]
+			//IE < 8 support
+			//Algoritm in https://github.com/termi/ES5-DOM-SHIM/wiki/IE-less-then-8-shim-algoritm
+			if(isIElt8Support && global["Node"].prototype["ielt8"] && !("getopen" in global["Node"].prototype)) {
+				Object.defineProperty(global["Node"].prototype, "open", open_property);
+			}
+			//[IElt8] End
+			
+			Array["from"](document.getElementsByTagName("details")).forEach(detailShim);
 		}
 		
 		//auto init

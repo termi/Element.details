@@ -1,13 +1,25 @@
-﻿<html>
-<script src="https://raw.github.com/termi/ES5-DOM-SHIM/master/__SRC/a.js"></script>
-<script src="../__SRC/Element.details.js"></script>
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	
+	
+	<link rel="stylesheet" href="http://static.onlf.ru/css/a.css" />
+	
+	<script src="a.ie8.js"></script>
+	<script src="a.js"></script>
+	<script src="html5shiv.js"></script>
+	<script src="../__SRC/Element.details.js"></script>
 
-<style>
-details > summary {
-	cursor:pointer
-}
-</style>
+	<style>
+	details > summary {
+		cursor:pointer
+	}
+	</style>
+</head>
 
+<body>
 <details>
 	asdfasdf
 	<summary>ololo1</summary>
@@ -18,6 +30,7 @@ details > summary {
 	</details>
 </details>
 
-<details>
+<details id=test open class=test qwe=eee>
 	Detail without `summaty`
 </details>
+<body>
