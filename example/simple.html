@@ -7,8 +7,13 @@
 	
 	<link rel="stylesheet" href="http://static.onlf.ru/css/a.css" />
 	
-	<script src="a.ie8.js"></script>
-	<script src="a.js"></script>
+	<!--[if lt IE 9]>
+	<script src="https://raw.github.com/termi/ES5-DOM-SHIM/master/__SRC/a.ie8.js"></script>
+	<![endif]-->
+	<!--[if lt IE 8]>
+	<script src="https://raw.github.com/termi/ES5-DOM-SHIM/master/__SRC/a.ielt8.js"></script>
+	<![endif]-->
+	<script src="https://raw.github.com/termi/ES5-DOM-SHIM/master/__SRC/a.js"></script>
 	<script src="html5shiv.js"></script>
 	<script src="../__SRC/Element.details.js"></script>
 
@@ -33,4 +38,12 @@
 <details id=test open class=test qwe=eee>
 	Detail without `summaty`
 </details>
+
+<test id=test22>
+	<button onclick="test22.innerHTML='<details>test22</details>';Array.from(document.querySelectorAll('details')).forEach(function(el){el.open=el.open})">test dynamic</button>
+</test>
+
+<script>
+
+</script>
 <body>

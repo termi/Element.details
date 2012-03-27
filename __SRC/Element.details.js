@@ -6,7 +6,15 @@
 // @check_types
 // ==/ClosureCompiler==
 
-;(function(global, support, isIElt8Support) {
+//GCC DEFINES START
+/** @define {boolean} */
+var TRY_IELT8_SUPPORT = true;//[IElt8] Try to support IE < 8
+//GCC DEFINES END
+
+
+;(function(global, support) {
+	var IS_IElt8_SUPPORT = TRY_IELT8_SUPPORT && global["Node"] && global["Node"].prototype && global["Node"].prototype["ielt8"];
+	
 	if(!support) {
 		// property 'open'
 		var open_property = {
@@ -18,11 +26,28 @@
 			"set" : function(booleanValue) {
 				if(this.nodeName.toUpperCase() != "DETAILS")return undefined;
 				
-				booleanValue ?
-					(this.setAttribute("open", "open"), this.classList.remove("close"), this.classList.add("open")) :
-					(this.removeAttribute("open"), this.classList.remove("open"), this.classList.add("close"));
+				detailsShim(this);
 				
-				//$A(this.childNodes).forEach(emulateDetailChildrenOpenClose);
+				//[IElt8] START
+				//Prevent recursion setter call
+				if(IS_IElt8_SUPPORT && open_property["msie"]) {
+					if(this._["__inopenset"])
+						throw new Error("Setter is broken");
+					this._["__inopenset"] = true;
+				}
+				//[IElt8] END
+				
+				booleanValue ?
+					(this.classList.remove("close"), this.classList.add("open"), this.setAttribute("open", "open")) :
+					(this.classList.remove("open"), this.classList.add("close"), this.removeAttribute("open"));
+				
+				//Array["from"](this.childNodes).forEach(emulateDetailChildrenOpenClose);
+				
+				//[IElt8] START
+				if(IS_IElt8_SUPPORT && open_property["msie"]) {
+					this._["__inopenset"] = false;
+				}
+				//[IElt8] END
 				
 				return booleanValue;
 			}
@@ -59,35 +84,29 @@
 				this.parentNode["open"] = !this.parentNode["open"];
 		}
 		
-		//detail shim
-		function detailShim(detail) {
-			if(detail.isShimmed)return;
+		//details shim
+		function detailsShim(details) {
+			if(details._ && details._.isShimmed)return;
 			
-			// property 'open'
-			// IE < 9 support in https://github.com/termi/ES5-DOM-SHIM
-			Object.defineProperty(detail, "open", open_property);
+			if(!details._)details._ = {};
 			
 			var /** @type {Element} */
 				summary,
 				/** @type {number} */
 				i = 0;
-			
-			//DOM API
-			detail["open"] = 
-				detail.hasAttribute("open");
-			
+						
 			//Wrap text node's and found `summary`
 			function wrapTextNodeAndFoundSummary(child) {
 				if(child.nodeType === 3 && /[^\t\n\r ]/.test(child.data)) {
-					detail.insertBefore(
+					details.insertBefore(
 						document.createElement("x-i")//Create a fake inline element
 						, child).innerHTML = child.data;
 
-					detail.removeChild(child);
+					details.removeChild(child);
 				}
 				else if(child.nodeName.toUpperCase() == "SUMMARY")summary = child;
 			}
-			Array["from"](detail.childNodes).forEach(wrapTextNodeAndFoundSummary);
+			Array["from"](details.childNodes).forEach(wrapTextNodeAndFoundSummary);
 			
 			//Create a fake "summary" element
 			if(!summary)
@@ -97,7 +116,7 @@
 				summary.className = "▼";//http://css-tricks.com/unicode-class-names/
 				
 			//Put summary as a first child
-			detail.insertBefore(summary, detail.childNodes[0]);
+			details.insertBefore(summary, details.childNodes[0]);
 			//Create `details-marker` and put it as a summary first child
 			summary.insertBefore(document.createElement('x-i'), summary.childNodes[0])
 				.className = "details-marker";
@@ -110,27 +129,29 @@
 			summary.addEventListener("keyup", event_DetailClick, false);
 			
 			//flag to avoid double shim
-			detail.isShimmed = 1;
+			details._.isShimmed = 1;
 			
 			//[IElt8]
 			//IE < 8 support
 			//Algoritm in https://github.com/termi/ES5-DOM-SHIM/wiki/IE-less-then-8-shim-algoritm
-			if(isIElt8Support && global["Node"].prototype["ielt8"]) {
-				detail["addBehavior"]("Element.details.ielt8.htc");
+			if(IS_IElt8_SUPPORT) {
+				details["addBehavior"]("Element.details.ielt8.htc");
+				open_property["msie"] = true;
 			}
+			//[IElt8] END
 		}
 		
 		//init
 		function init(root) {
-			//[IElt8]
-			//IE < 8 support
-			//Algoritm in https://github.com/termi/ES5-DOM-SHIM/wiki/IE-less-then-8-shim-algoritm
-			if(isIElt8Support && global["Node"].prototype["ielt8"] && !("getopen" in global["Node"].prototype)) {
-				Object.defineProperty(global["Node"].prototype, "open", open_property);
-			}
-			//[IElt8] End
+			// property 'open'
+			// IE < 9 support in https://github.com/termi/ES5-DOM-SHIM
+			Object.defineProperty(global["Node"].prototype, "open", open_property);
 			
-			Array["from"](document.getElementsByTagName("details")).forEach(detailShim);
+			Array["from"](document.getElementsByTagName("details")).forEach(function(details) {
+				//DOM API
+				details["open"] = 
+					details.hasAttribute("open");
+			});
 		}
 		
 		//auto init
@@ -139,13 +160,11 @@
 		else init(document);
 	}
 	else {
-		//TODO:: for animation and over stuffs we need to listen "open" property change and add "open" css class for Detail element
+		//TODO:: for animation and over stuffs we need to listen "open" property change and add "open" css class for <details> element
 	}
 })(
 	window,//global
 	
-	'open' in document.createElement('details'),// Chrome 10 will fail this detection, but Chrome 10 is no longer existing
-	
-	true//[IElt8] Try to support IE < 8
+	'open' in document.createElement('details')// Chrome 10 will fail this detection, but Chrome 10 is no longer existing
 );
 
