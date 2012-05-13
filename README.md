@@ -1,7 +1,8 @@
 # A pure JS polyfill for `details` tag with DOM API for all browsers including IE6+
 
-__Status__: Beta 2 \\
-__Demo__: http://jsbin.com/eyopiy/2
+__Status__: Beta 2
+
+__Demo__: http://jsbin.com/eyopiy/5
 
 ## Using
 
@@ -12,9 +13,9 @@ __Demo__: http://jsbin.com/eyopiy/2
 <!--[if IE 8]>
 <script src="Element.details.ie8.js"></script>
 <![endif]-->
-<!--[if gt IE 8] -->
+<!--[if gt IE 8]><!-->
 <script src="Element.details.js"></script>
-<!-- ![endif]-->
+<!--<![endif]-->
 ```
 
 ## DOM API
@@ -69,11 +70,11 @@ $("details").each(function(k, el) {
 
  
 ## Browser support
- - With any DOM and JS shim: all browsers (including IE8+)
- - IE6,IE7 only support with `Element.details.ielt8.htc` file in the root of youre site
+ - All browsers including IE8
+ - IE7,IE6 only support with `Element.details.ielt8.htc` file in the root of youre site
 
-## IE < 9
- - Problem: Property `open` has the same name as Attribute `open`.
+## IE < 8
+ - Problem: Property `open` has the same name as Attribute `open` -> rename attribute to "$OPEN$"
 
 ## TODO
 1. Listeners (open/close)

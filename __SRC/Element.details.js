@@ -8,13 +8,6 @@
 
 /*
 HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
-
-FOR IE8:
-if(!document.addEventListener)Element.prototype.addEventListener = document.addEventListener = function(type, listener) {
-	if(type == "DOMContentLoaded")type = "load";
-	type = "on" + type;
-	this.attachEvent(type, listener);
-}
 */
 
 
