@@ -1,36 +1,58 @@
 # A pure JS polyfill for `details` tag with DOM API for all browsers including IE6+
 
-__Status__: Beta (IMPORTANT)IE6 and IE7 support is not finished yet due IE < 8 broken `getAttribute`
+__Status__: Beta 2 \\
 __Demo__: http://jsbin.com/eyopiy/2
+
+## Using
+
+```html
+<!--[if lt IE 8]>
+<script src=Element.details.ielt8.js"></script>
+<![endif]-->
+<!--[if IE 8]>
+<script src="Element.details.ie8.js"></script>
+<![endif]-->
+<!--[if gt IE 8] -->
+<script src="Element.details.js"></script>
+<!-- ![endif]-->
+```
 
 ## DOM API
     
-	var details = document.querySelector("details");
-    details.open = true;
-    details.open = false;
+```javascript
+var details = document.querySelector("details");
+details.open = true;
+details.open = false;
+```
 
 ## CSS selector for 'details marker'
    
-    detail .details-marker { <some> }
-	[or] detail>*>.details-marker { <some> }
-	
-    summary::-webkit-details-marker { <some> }
-    summary::-moz-details-marker { <some> }
-    summary::-o-details-marker { <some> }
-    summary::details-marker { <some> }
+```css
+detail .details-marker { <some> }
+[or] detail>*>.details-marker { <some> }
+
+summary::-webkit-details-marker { <some> }
+summary::-moz-details-marker { <some> }
+summary::-o-details-marker { <some> }
+summary::details-marker { <some> }
+```
 
 ##Use with dynamic HTML
-jQuery:
-	
-	$("details").each(function(k, el) {
-		el.open = el.open;
-	})
-
 DOM API:
 	
-	Array.from(document.querySelectorAll('details')).forEach(function(el){
-		el.open = el.open
-	})
+```javascript
+Array.from(document.querySelectorAll('details')).forEach(function(el){
+	el.open = el.open
+})
+```
+
+jQuery:
+	
+```javascript
+$("details").each(function(k, el) {
+	el.open = el.open;
+})
+```
 	
 ##Features
 
@@ -42,21 +64,16 @@ DOM API:
 
 ##Limitations
 1. Require: 
-	- [Array.from](https://github.com/paulmillr/es6-shim)
-	- [EcmaScript5 shim](https://github.com/kriskowal/es5-shim) for browsers without ES5
-	- For some old browsers (not only IE) you may need [DOM-shim](https://github.com/Raynos/DOM-shim)
-	- Note: You can use only my [DOM/JS shim](https://github.com/termi/ES5-DOM-SHIM) to solve all dependencies with IE6+ support
+	- For some old browsers (not only IE) you may need [DOM-shim](https://github.com/Raynos/DOM-shim) or [DOM4/ES5 shim](https://github.com/termi/ES5-DOM-SHIM) to solve some dependencies
 2. No animation support for now
 
  
 ## Browser support
- - With any DOM and JS shim: all browsers (including IE9+)
- - IE6,IE7,IE8 only with this [DOM/JS shim](https://github.com/termi/ES5-DOM-SHIM) and with `Element.details.ielt8.htc` file in the root of youre site
+ - With any DOM and JS shim: all browsers (including IE8+)
+ - IE6,IE7 only support with `Element.details.ielt8.htc` file in the root of youre site
 
 ## IE < 9
-Problem: Property `open` has the same name as Attribute `open`.
-Old IE has incorrect implementation of the [get/set/has/remove]Attribute, so it need to be shimed. You can fork this lib and try to solve this problem or you can just use my [DOM/JS shim](https://github.com/termi/ES5-DOM-SHIM)
+ - Problem: Property `open` has the same name as Attribute `open`.
 
 ## TODO
 1. Listeners (open/close)
-2. "root" in init() support

@@ -1,11 +1,11 @@
 <PUBLIC:COMPONENT lightWeight="true">
 <PUBLIC:PROPERTY NAME="open" GET="getOpen" PUT="setOpen" />
 <SCRIPT>
-/*@requared window.Node.prototype = {
+/*@requared window.Element.prototype = {
  *  getopen : <Function>,
  *  setopen : <Function>
  * }*/
-var Element_proto=window.Node.prototype,
+var Element_proto=window.Element.prototype,
 	getOpen=Element_proto.getopen,
 	setOpen=Element_proto.setopen;
 </SCRIPT>
