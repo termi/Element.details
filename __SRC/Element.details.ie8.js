@@ -13,39 +13,43 @@
 		//style
 		document.head.insertAdjacentHTML("beforeend", "<br><style>" +//<br> need for all IE
 			"details{display:block}" +
-			"details.close>*{display:none}" +
-			"details summary,details.close>summary,details .▼{display:block}" +
-			"details.close .details-marker:before{content:'►'}" +
+			"details.►>*{display:none}" +
+			"details summary,details.►>summary,details>.▼▼{display:block}" +
+			"details.► .details-marker:before{content:'►'}" +
 			"details .details-marker:before{content:'▼'}" +
 		"</style>");
 
 		var _Element = global["Element"] || (global["Element"] = {}),
 			_Element_prototype = (_Element.prototype || (_Element.prototype = {})),
-			addCssClass = function(node, klas) {
-                var re = new RegExp("(^|\\s)" + klas + "(\\s|$)", "g");
-                if(re.test(node.className))return node;
-                node.className = (node.className + " " + klas).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+			addOrRemoveCssClass = function(add, node, klas) {
+                var re = new RegExp("(^|\\s)" + klas + "(\\s|$)", "g"),
+                	ka = node.className;
+
+                if(add) {
+	                if(re.test(ka))return node;
+	                ka = (ka + " " + klas);
+                }
+                else 
+                	ka = ka.replace(re, "$1");
+
+                node.className = ka.replace(/\s+/g, " ").replace(/(^ | $)/g, "");
             },
-            removeCssClass = function(node, klas) {
-                var re = new RegExp("(^|\\s)" + klas + "(\\s|$)", "g");
-                node.className = node.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
-            };
+            _openAttributeReplacement = "OPEN";
 
 		// property 'open'
 		var open_property = {
 			"get" : function() {
-				if(this.nodeName.toUpperCase() != "DETAILS")return void 0;
+				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
 				
-				return this.getAttribute("OPEN") !== null;
+				return this.getAttribute(_openAttributeReplacement) !== null;
 			},
 			"set" : function(booleanValue) {
-				if(this.nodeName.toUpperCase() != "DETAILS")return void 0;
+				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
 
 				booleanValue = detailsShim(this, booleanValue);
 				
-				booleanValue ?
-					(removeCssClass(this, "close"), addCssClass(this, "open"), this.setAttribute("OPEN", "")) :
-					(removeCssClass(this, "open"), addCssClass(this, "close"), this.removeAttribute("OPEN"));
+				addOrRemoveCssClass(!booleanValue, this, "►");
+				this[booleanValue ? "setAttribute" : "removeAttribute"](_openAttributeReplacement, "");
 				
 				//Array["from"](this.childNodes).forEach(emulateDetailChildrenOpenClose);
 				
@@ -93,7 +97,7 @@
 				(
 					summary = document.createElement("x-s")
 				).innerHTML = "Details",
-				summary.className = "▼";//http://css-tricks.com/unicode-class-names/
+				summary.className = "▼▼";//http://css-tricks.com/unicode-class-names/
 			
 			//Put summary as a first child
 			details.insertBefore(summary, details.childNodes[0]);
@@ -119,8 +123,10 @@
 			//For IE8 Object.defineProperty(Node.prototype, "open", {get : getter, set : setter}) is not enoth. setter not work
 			Object.defineProperty(details, "open", open_property);
 			
-			details.removeAttribute("open");
-			if(prevValue)details.setAttribute("OPEN", "");
+			if(prevValue) {
+				details.removeAttribute("open");
+				details.setAttribute(_openAttributeReplacement, "");
+			}
 
 			return prevValue;
 		}

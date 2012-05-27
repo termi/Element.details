@@ -13,40 +13,50 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 
 
 ;(function(global, support) {
+
+	"use strict";
+
 	if(!support) {
+		var /** @type {Object} */
+		    open_property
+		    /** @type {Function} */
+		  , event_DetailClick
+		  	/** @type {Function} */
+		  , detailsShim
+		  	/** @type {Function} */
+		  , init;
+		
 		//style
 		document.head.insertAdjacentHTML("beforeend", "<br><style>" +//<br> need for all IE
 			"details{display:block}" +
-			"details.close>*{display:none}" +
-			"details>summary,details.close>summary,details>.▼{display:block}" +
-			"details.close .details-marker:before{content:'►'}" +
-			"details .details-marker:before{content:'▼'}" +
+			"details>*{display:none}" +
+			"details>summary,details>summary,details>.▼▼{display:block}" +
+			"details .details-marker:before{content:'►'}" +
+			"details.▼ .details-marker:before{content:'▼'}" +
+			"details.▼>*{display:block}" +
 		"</style>");
 
 		// property 'open'
-		var open_property = {
+		open_property = {
 			"get" : function() {
-				if(this.nodeName.toUpperCase() != "DETAILS")return void 0;
+				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
 				
 				return this.hasAttribute("open");
 			},
 			"set" : function(booleanValue) {
-				if(this.nodeName.toUpperCase() != "DETAILS")return void 0;
+				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
 				
 				detailsShim(this);
 				
-				booleanValue ?
-					(this.classList.remove("close"), this.classList.add("open"), this.setAttribute("open", "open")) :
-					(this.classList.remove("open"), this.classList.add("close"), this.removeAttribute("open"));
-				
-				//Array["from"](this.childNodes).forEach(emulateDetailChildrenOpenClose);
+				this.classList[booleanValue ? "add" : "remove"]('▼');
+				(this[booleanValue ? 'setAttribute' : 'removeAttribute'])("open", "open");
 				
 				return booleanValue;
 			}
-		}
+		};
 	
 		//event		
-		function event_DetailClick(e) {
+		event_DetailClick = function(e) {
 			if(e.detail === 0)return;//Opera generate "click" event with `detail` == 0 together with "keyup" event
 			
 			// 32 - space. Need this ???
@@ -58,7 +68,7 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 		}
 
 		//details shim
-		function detailsShim(details) {
+		detailsShim = function(details) {
 			if(details._ && details._["__isShimmed"])return;
 			
 			if(!details._)details._ = {};
@@ -87,7 +97,7 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 				(
 					summary = document.createElement("x-s")
 				).innerHTML = "Details",
-				summary.className = "▼";//http://css-tricks.com/unicode-class-names/
+				summary.className = "▼▼";//http://css-tricks.com/unicode-class-names/
 				
 			//Put summary as a first child
 			details.insertBefore(summary, details.childNodes[0]);
@@ -107,7 +117,7 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 		}
 		
 		//init
-		function init() {
+		init = function() {
 			// property 'open'
 			Object.defineProperty(global["Element"].prototype, "open", open_property);
 			

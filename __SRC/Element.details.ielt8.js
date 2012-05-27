@@ -15,15 +15,19 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 		var isNeedBehavior,
 			_Element = global["Element"] || (global["Element"] = {}),
 			_Element_prototype = (_Element.prototype || (_Element.prototype = {})),
-			addCssClass = function(node, klas) {
-                var re = new RegExp("(^|\\s)" + klas + "(\\s|$)", "g");
-                if(re.test(node.className))return node;
-                node.className = (node.className + " " + klas).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
-            },
-            removeCssClass = function(node, klas) {
-                var re = new RegExp("(^|\\s)" + klas + "(\\s|$)", "g");
-                node.className = node.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
-            },
+			addOrRemoveCssClass = function(add, node, klas) {
+                var re = new RegExp("(^|\\s)" + klas + "(\\s|$)", "g"),
+                	ka = node.className;
+
+                if(add) {
+	                if(re.test(ka))return node;
+	                ka = (ka + " " + klas);
+                }
+                else 
+                	ka = ka.replace(re, "$1");
+
+                node.className = ka.replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+            };
             isCssClass = function(node, klas) {
                 return !!~(" " + node.className + " ").indexOf(" " + klas + " ")
             },
@@ -35,7 +39,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 
             	while(child = details.childNodes[++i]) {
             		if(child.nodeType == 1) {
-	            		if(child.nodeName.toUpperCase() == "SUMMARY" || isCssClass(child, "▼")) {
+	            		if(child.nodeName.toUpperCase() == "SUMMARY" || isCssClass(child, "▼▼")) {
 	            			j = -1;
 	            			while(!detailsMarker && (detailsMarker = child.childNodes[++j]) && !isCssClass(detailsMarker, "details-marker")) {
 	            				detailsMarker = void 0;
@@ -51,18 +55,17 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 		// property 'open'
 		var open_property = {
 			"get" : function() {
-				if(this.nodeName.toUpperCase() != "DETAILS")return void 0;
+				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
 				
 				return this.getAttribute(_openAttributeReplacement) !== null;
 			},
 			"set" : function(booleanValue) {
-				if(this.nodeName.toUpperCase() != "DETAILS")return void 0;
+				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
 
 				booleanValue = detailsShim(this, booleanValue);
 				
-				booleanValue ?
-					(removeCssClass(this, "close"), addCssClass(this, "open"), this.setAttribute(_openAttributeReplacement, "")) :
-					(removeCssClass(this, "open"), addCssClass(this, "close"), this.removeAttribute(_openAttributeReplacement));
+				addOrRemoveCssClass(!booleanValue, this, "►");
+				this[booleanValue ? "setAttribute" : "removeAttribute"](_openAttributeReplacement, "");
 				
 				emulateDetailChildrenOpenClose(this, booleanValue);
 				
@@ -85,10 +88,8 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 	
 		//style
 		document.head.insertAdjacentHTML("beforeend", "<br><style>" +//<br> need for all IE
-			"details summary,details .▼{display:block}" +
-			"details{display:block" + (isNeedBehavior ? ";behavior:url(" + __URL_TO_DETAILS_BEHAVIOR__ + ")}" : "}") +			
-			"details.close>*{display:none}" +
-			"details.close>summary,details.close>.▼{display:block}" +
+			"details summary,details .▼▼{display:block}" +
+			"details{display:block" + (isNeedBehavior ? ";behavior:url(" + __URL_TO_DETAILS_BEHAVIOR__ + ")}" : "}") +
 		"</style>");
 
 		//event		
@@ -98,7 +99,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 			
 			if(e.keyCode === 13 ||//e.type == "keyup"
 			   e.type === "click")
-				this.parentNode["open"] = !this.parentNode["open"];
+				open_property["set"].call(this.parentNode, !(this.parentNode.getAttribute("open") !== null));
 		}
 		
 		//details shim
@@ -143,7 +144,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 				(
 					summary = document.createElement("x-s")
 				).innerHTML = "Details",
-				summary.className = "▼";//http://css-tricks.com/unicode-class-names/
+				summary.className = "▼▼";//http://css-tricks.com/unicode-class-names/
 			
 			//if(_browser_msie < 8)_.summary = summary;
 
@@ -175,9 +176,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 				details,
 				i = -1;
 			while(details = detailses[++i]) {
-				//DOM API
-				details["open"] = 
-					details.getAttribute("open") !== null;
+				open_property["set"].call(details, details.getAttribute("open") !== null);
 			};
 		}
 
