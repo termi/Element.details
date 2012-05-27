@@ -24,8 +24,9 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 		  	/** @type {Function} */
 		  , detailsShim
 		  	/** @type {Function} */
-		  , init;
-		
+		  , init
+		;
+
 		//style
 		document.head.insertAdjacentHTML("beforeend", "<br><style>" +//<br> need for all IE
 			"details{display:block}" +

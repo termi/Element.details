@@ -99,7 +99,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 			
 			if(e.keyCode === 13 ||//e.type == "keyup"
 			   e.type === "click")
-				open_property["set"].call(this.parentNode, !(this.parentNode.getAttribute("open") !== null));
+				open_property["set"].call(this.parentNode, !(open_property["get"].call(this.parentNode)));
 		}
 		
 		//details shim
@@ -176,7 +176,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 				details,
 				i = -1;
 			while(details = detailses[++i]) {
-				open_property["set"].call(details, details.getAttribute("open") !== null);
+				open_property["set"].call(details, open_property["get"].call(details));
 			};
 		}
 
