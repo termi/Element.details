@@ -57,7 +57,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 			"get" : function() {
 				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
 				
-				return this.getAttribute(_openAttributeReplacement) !== null;
+				return this.getAttribute(_openAttributeReplacement, 1) !== null;
 			},
 			"set" : function(booleanValue) {
 				if(!("nodeName" in this) || this.nodeName.toUpperCase() != "DETAILS")return void 0;
@@ -65,7 +65,10 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 				booleanValue = detailsShim(this, booleanValue);
 				
 				addOrRemoveCssClass(!booleanValue, this, "►");
-				this[booleanValue ? "setAttribute" : "removeAttribute"](_openAttributeReplacement, "");
+				booleanValue ?
+					this.setAttribute(_openAttributeReplacement, "", 1) :
+					this.removeAttribute(_openAttributeReplacement, 1)
+				;
 				
 				emulateDetailChildrenOpenClose(this, booleanValue);
 				
@@ -75,16 +78,15 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 
 		// property 'open'
 		if(Object.defineProperty) {
-			Object.defineProperty(_Element_prototype, "open", open_property)//IE8
-			isNeedBehavior = "getopen" in _Element_prototype;
+			Object.defineProperty(_Element_prototype, "open", open_property);//IE8
 		}
-		else {//IE7,IE6
+		if(!("open" in _Element_prototype) && !("getopen" in _Element_prototype)) {//IE7,IE6
 			//Algoritm in https://github.com/termi/ES5-DOM-SHIM/wiki/IE-less-then-8-shim-algoritm
-			isNeedBehavior = true;
 			_Element_prototype["getopen"] = open_property["get"];
 			_Element_prototype["setopen"] = open_property["set"];
+			isNeedBehavior = true;
 		}
-		if(isNeedBehavior)_openAttributeReplacement = "$OPEN$";
+		if(isNeedBehavior)_openAttributeReplacement = "OPEN";
 	
 		//style
 		document.head.insertAdjacentHTML("beforeend", "<br><style>" +//<br> need for all IE
@@ -117,15 +119,14 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 			}
 			
 			details.removeAttribute("open");
-			if(prevValue)details.setAttribute(_openAttributeReplacement, "");
+			if(prevValue)details.setAttribute(_openAttributeReplacement, "", 1);
 			
 			var /** @type {Element} */
 				summary,
 				/** @type {number} */
 				i = 0,
 				child,
-				j = -1,
-				detailsMarker;
+				j = -1;
 						
 			//Wrap text node's and found `summary`
 			while(child = details.childNodes[++j]) {
@@ -160,7 +161,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 			//events
 			function eventWrapper() {
 				event_DetailClick.call(summary, event)
-			};
+			}
 			summary.attachEvent("onclick", eventWrapper);
 			summary.attachEvent("onkeyup", eventWrapper);
 			
@@ -177,7 +178,7 @@ var __URL_TO_DETAILS_BEHAVIOR__ = "/Element.details.ielt8.htc";
 				i = -1;
 			while(details = detailses[++i]) {
 				open_property["set"].call(details, open_property["get"].call(details));
-			};
+			}
 		}
 
 		//auto init

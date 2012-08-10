@@ -66,7 +66,7 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 			if(e.keyCode === 13 ||//e.type == "keyup"
 			   e.type === "click")
 				this.parentNode["open"] = !this.parentNode["open"];
-		}
+		};
 
 		//details shim
 		detailsShim = function(details) {
@@ -115,7 +115,7 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 			
 			//flag to avoid double shim
 			details._["__isShimmed"] = 1;
-		}
+		};
 		
 		//init
 		init = function() {
@@ -129,8 +129,8 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 				//DOM API
 				details["open"] = 
 					details.hasAttribute("open");
-			};
-		}
+			}
+		};
 		
 		//auto init
 		if(document.readyState != "complete")

@@ -49,7 +49,9 @@
 				booleanValue = detailsShim(this, booleanValue);
 				
 				addOrRemoveCssClass(!booleanValue, this, "►");
-				this[booleanValue ? "setAttribute" : "removeAttribute"](_openAttributeReplacement, "");
+				booleanValue ?
+					this.setAttribute(_openAttributeReplacement, "", 1) :
+					this.removeAttribute(_openAttributeReplacement, 1)
 				
 				//Array["from"](this.childNodes).forEach(emulateDetailChildrenOpenClose);
 				
@@ -111,7 +113,7 @@
 			//events
 			function eventWrapper() {
 				event_DetailClick.call(summary, event)
-			};
+			}
 			summary.attachEvent("onclick", eventWrapper);
 			summary.attachEvent("onkeyup", eventWrapper);
 			
@@ -125,7 +127,7 @@
 			
 			if(prevValue) {
 				details.removeAttribute("open");
-				details.setAttribute(_openAttributeReplacement, "");
+				details.setAttribute(_openAttributeReplacement, "", 1);
 			}
 
 			return prevValue;
@@ -143,7 +145,7 @@
 				//DOM API
 				details["open"] = 
 					details.getAttribute("open") !== null;
-			};
+			}
 		}
 		
 		//auto init
