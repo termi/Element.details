@@ -8,7 +8,7 @@ __Demo__: http://jsbin.com/eyopiy/5
 
 ```html
 <!--[if lt IE 8]>
-<script src=Element.details.ielt8.js"></script>
+<script src="Element.details.ielt8.js"></script>
 <![endif]-->
 <!--[if IE 8]>
 <script src="Element.details.ie8.js"></script>
