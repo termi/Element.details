@@ -58,8 +58,6 @@ HTMLElement.prototype.insertAdjacentHTML = https://gist.github.com/1276030
 	
 		//event		
 		event_DetailClick = function(e) {
-			if(e.detail === 0)return;//Opera generate "click" event with `detail` == 0 together with "keyup" event
-			
 			// 32 - space. Need this ???
 			// 13 - Enter.
 			
